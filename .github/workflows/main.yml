@@ -1,0 +1,24 @@
+name: Our workflow
+on:
+  push:
+    branches: [ main ]
+jobs:
+  build:
+    name: "Checkout and build"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v2
+        
+      - name: "Build image"
+        run: docker build . --tag docker.pkg.github.com/andersro93/docker-static-demo
+        
+      - name: "Login to Registry"
+        uses: docker/login-action@v1.6.0
+        with:
+          registry: docker.pkg.github.com
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Publish image"
+        run: docker push docker.pkg.github.com/andersro93/docker-static-demo
